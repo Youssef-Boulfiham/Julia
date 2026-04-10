@@ -1,3 +1,6 @@
+// build: make clean && make
+// run: make run NP=4
+
 #include <cmath>
 #include <complex>
 #include <numbers>
@@ -31,9 +34,42 @@ inline constexpr pixel COLOURISE(double iter) {
   return { r, g, b };
 }
 
+
 void renderFrame(animation &frames, unsigned int t, unsigned int offset) {
-  // TODO - render frame t and store in frames[t-offset]
+  frame &f = frames[t - offset];
+
+  // c is constant per frame, varieert per animatie
+  double a = 2 * std::numbers::pi * t / CYCLE_FRAMES;
+  double r = 0.7885;
+  std::complex<double> c = r * cos(a) + static_cast<std::complex<double>>(1i) * r * sin(a);
+
+  double x_y_range = 2;
+  double scale = 1.5 - 1.45 * log(1 + 9.0 * t / FRAMES) / log(10);
+
+  for (unsigned int x = 0; x < WIDTH; x++) {
+    for (unsigned int y = 0; y < HEIGHT; y++) {
+
+      // z berekenen op basis van pixel coordinaat
+      std::complex<double> z = 2 * x_y_range * std::complex(
+          static_cast<double>(x) / WIDTH,
+          static_cast<double>(y) / HEIGHT)
+        - std::complex(x_y_range * 3.0 / 4, x_y_range);
+      z *= scale;
+
+      // Julia iteraties
+      unsigned int iter = 0;
+      while (std::abs(z) < x_y_range && iter < MAX_ITER) {
+        z = z * z + c;
+        iter++;
+      }
+
+      // Kleur bepalen
+      pixel col = (iter == MAX_ITER) ? pixel{0, 0, 0} : COLOURISE((double)iter);
+      f.set_colour(x, y, col);
+    }
+  }
 }
+
 
 int main (int argc, char *argv[]) {
   MPI_Init(&argc, &argv);
