@@ -6,9 +6,9 @@
 #include <iostream>
 #include <mpi.h>
 
-#include "consts.h"
-#include "frame.h"
-#include "animation.h"
+#include "src/include/consts.h"
+#include "src/include/frame.h"
+#include "src/include/animation.h"
 
 #define cimg_display 0        // No window plz
 #include "CImg.h"
