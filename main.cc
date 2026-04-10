@@ -11,7 +11,7 @@
 #include "animation.h"
 
 #define cimg_display 0
-#include "CImg.h"
+#include "src/include/CImg.h"
 
 using std::cout, std::endl;
 using namespace std::literals::complex_literals;
